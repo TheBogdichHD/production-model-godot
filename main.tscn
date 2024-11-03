@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://chh4lhnbamfyq"]
+[gd_scene load_steps=3 format=3 uid="uid://chh4lhnbamfyq"]
 
-[ext_resource type="Script" path="res://Main.cs" id="1_r2icu"]
+[ext_resource type="Script" path="res://scripts/Main.cs" id="1_l6gvp"]
+[ext_resource type="Script" path="res://item_list.gd" id="2_c5g6r"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -9,4 +10,62 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_r2icu")
+script = ExtResource("1_l6gvp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+alignment = 1
+selected = 0
+item_count = 2
+popup/item_0/text = "Forward"
+popup/item_1/text = "Backward"
+popup/item_1/id = 1
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Solve"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemListInitial" type="ItemList" parent="VBoxContainer/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+select_mode = 1
+script = ExtResource("2_c5g6r")
+
+[node name="ItemListTarget" type="ItemList" parent="VBoxContainer/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+select_mode = 1
+script = ExtResource("2_c5g6r")
+
+[node name="GraphEdit" type="GraphEdit" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+scroll_offset = Vector2(0, -291)
+
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/OptionButton" to="." method="OnOptionButtonItemSelected"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Button" to="." method="OnButtonPressed"]
