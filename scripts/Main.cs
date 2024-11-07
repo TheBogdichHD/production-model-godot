@@ -21,16 +21,16 @@ public partial class Main : Control
     private void ReadFiles()
     {
         foreach (var line in File.ReadAllLines(FactsPath).Where(x => !x.StartsWith('#') && x.Any())) {
-            var split = line.Split(": ");
-            model.AddFact(split[0], split[1]);
+            var split = line.Split(":");
+            model.AddFact(split[0].Trim(), split[1].Trim());
 
-            itemListInitial.AddItem(split[1]);
-            itemListTarget.AddItem(split[1]);
+            itemListInitial.AddItem(split[1].Trim());
+            itemListTarget.AddItem(split[1].Trim());
         }
 
         foreach (var line in File.ReadAllLines(RulesPath).Where(x => !x.StartsWith('#') && x.Any())) {
             var split = line.Split("->");
-            model.AddRule(split[0].Split(";"), split[1].Split(";"));
+            model.AddRule(split[0].Split(";").Select(x => x.Trim()), split[1].Split(";").Select(x => x.Trim()));
         }
     }
 
@@ -94,6 +94,7 @@ public partial class Main : Control
                     graphEdit.AddChild(graphNodeTo);
                 }
 
+                // Добавить поддержку нескольких toNodeTitles
                 foreach (var fromNodeTitle in fromNodeTitles)
                 {
                     if (!graphEdit.HasNode(fromNodeTitle))
@@ -105,7 +106,6 @@ public partial class Main : Control
                         graphEdit.AddChild(graphNodeFrom);
                     }
 
-                    
                     graphEdit.ConnectNode(fromNodeTitle, 0, toNodeTitle, 0);
                 }
                 
@@ -113,6 +113,7 @@ public partial class Main : Control
             }
         }
     }
+    
 	public override void _Ready()
 	{
         itemListInitial = GetNode<ItemList>("VBoxContainer/HSplitContainer/HSplitContainer/ItemListInitial");

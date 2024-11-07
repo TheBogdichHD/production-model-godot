@@ -26,21 +26,19 @@ namespace Production {
             var appliedRules = new List<Model.Rule>();
             while (applicableRules.Any()) {
                 var rule = applicableRules.First();
-
-                
+         
                 current.UnionWith(rule.To);
                 appliedRules.Add(rule);
 
-                // if (target.IsSubsetOf(current)) {
-                //     result.Success = true;
-                //     result.Rules = appliedRules;
-                //     break;
-                // }
+                if (target.IsSubsetOf(current)) {
+                    result.Success = true;
+                    result.Rules = appliedRules;
+                    break;
+                }
 
                 applicableRules = FindApplicableRules(current);
             }
-            result.Success = true;
-            result.Rules = appliedRules;
+
             return result;
         }
     }

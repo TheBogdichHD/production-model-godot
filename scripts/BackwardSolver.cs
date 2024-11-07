@@ -4,26 +4,8 @@ using System.Linq;
 namespace Production {
 
     class BackwardSolver : Solver {
-        //public ForwardSolver forwardSolver;
+        public BackwardSolver(Model model) : base(model) { }
 
-        public BackwardSolver(Model model) : base(model) {
-            //var invertedRules = InvertRules(model.Rules);
-            //var invertedModel = new Model(model.Facts, invertedRules);
-            //forwardSolver = new ForwardSolver(invertedModel);
-        }
-
-        // static Model.Rule InvertRule(Model.Rule rule) {
-        //     var invertedRule = new Model.Rule(rule);
-        //     (invertedRule.From, invertedRule.To) = (invertedRule.To, invertedRule.From);
-        //     return invertedRule;
-        // }
-
-        // static List<Model.Rule> InvertRules(List<Model.Rule> rules) {
-        //     var invertedRules = new List<Model.Rule>();
-        //     foreach (var rule in rules)
-        //         invertedRules.Add(InvertRule(rule));
-        //     return invertedRules;
-        // }
 
         public override Result Solve(IEnumerable<string> _current, IEnumerable<string> _target) {
             var current = _current.ToHashSet(); var target = _target.ToHashSet();
