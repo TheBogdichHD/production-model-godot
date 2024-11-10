@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://chh4lhnbamfyq"]
+[gd_scene load_steps=2 format=3 uid="uid://chh4lhnbamfyq"]
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_l6gvp"]
-[ext_resource type="Script" path="res://item_list.gd" id="2_c5g6r"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -54,13 +53,11 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 select_mode = 1
-script = ExtResource("2_c5g6r")
 
 [node name="ItemListTarget" type="ItemList" parent="VBoxContainer/HSplitContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 select_mode = 1
-script = ExtResource("2_c5g6r")
 
 [node name="GraphEdit" type="GraphEdit" parent="VBoxContainer/HSplitContainer"]
 layout_mode = 2

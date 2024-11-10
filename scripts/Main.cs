@@ -83,31 +83,34 @@ public partial class Main : Control
             GD.Print("> Productions:");
             foreach (var rule in result.Rules) {
                 IEnumerable<string> fromNodeTitles = rule.ToStringWithDescriptionsFrom(model);
-                string toNodeTitle = rule.ToStringWithDescriptionsTo(model);
+                IEnumerable<string> toNodeTitles = rule.ToStringWithDescriptionsTo(model);
 
-                if (!graphEdit.HasNode(toNodeTitle))
+                foreach (var toNodeTitle in toNodeTitles)
                 {
-                    GraphNode graphNodeTo = nodeScene.Instantiate<GraphNode>();
-                    graphNodeTo.Name = toNodeTitle;
-                    graphNodeTo.Title = toNodeTitle;
-                    
-                    graphEdit.AddChild(graphNodeTo);
-                }
-
-                // Добавить поддержку нескольких toNodeTitles
-                foreach (var fromNodeTitle in fromNodeTitles)
-                {
-                    if (!graphEdit.HasNode(fromNodeTitle))
+                    if (!graphEdit.HasNode(toNodeTitle))
                     {
-                        GraphNode graphNodeFrom = nodeScene.Instantiate<GraphNode>();
-                        graphNodeFrom.Name = fromNodeTitle;
-                        graphNodeFrom.Title = fromNodeTitle;
+                        GraphNode graphNodeTo = nodeScene.Instantiate<GraphNode>();
+                        graphNodeTo.Name = toNodeTitle;
+                        graphNodeTo.Title = toNodeTitle;
                         
-                        graphEdit.AddChild(graphNodeFrom);
+                        graphEdit.AddChild(graphNodeTo);
                     }
 
-                    graphEdit.ConnectNode(fromNodeTitle, 0, toNodeTitle, 0);
+                    foreach (var fromNodeTitle in fromNodeTitles)
+                    {
+                        if (!graphEdit.HasNode(fromNodeTitle))
+                        {
+                            GraphNode graphNodeFrom = nodeScene.Instantiate<GraphNode>();
+                            graphNodeFrom.Name = fromNodeTitle;
+                            graphNodeFrom.Title = fromNodeTitle;
+                            
+                            graphEdit.AddChild(graphNodeFrom);
+                        }
+
+                        graphEdit.ConnectNode(fromNodeTitle, 0, toNodeTitle, 0);
+                    }
                 }
+                
                 
                 GD.Print("\t" + rule.ToStringWithDescriptions(model));
             }

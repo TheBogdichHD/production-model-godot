@@ -88,9 +88,9 @@ namespace Production {
                 return fromDescs;
             }
 
-            public string ToStringWithDescriptionsTo(Model model) {
+            public IEnumerable<string> ToStringWithDescriptionsTo(Model model) {
                 var toDescs = To.Select(name => model.GetFactDescription(name) ?? name);
-                return toDescs.First();
+                return toDescs;
             }
 
             public override string ToString() {
