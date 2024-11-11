@@ -1,57 +1,62 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Production {
-
-    class BackwardSolver : Solver {
+namespace Production
+{
+    class BackwardSolver : Solver
+    {
         public BackwardSolver(Model model) : base(model) { }
 
-
-        public override Result Solve(IEnumerable<string> _current, IEnumerable<string> _target) {
+        public override Result Solve(IEnumerable<string> _current, IEnumerable<string> _target)
+        {
             var current = _current.ToHashSet(); var target = _target.ToHashSet();
             var rules = Model.Rules;
 
             var result = new Result() { Success = false };
 
-            // Build a tree of required productions
             var stack = new Stack<string>(target);
             var factProducingRules = new Dictionary<string, Model.Rule>();
             var appliedRules = new HashSet<Model.Rule>();
             var backPropagatedRules = new HashSet<Model.Rule>();
-            while (stack.Any() && !current.IsSupersetOf(target)) {
+
+            while (stack.Any() && !current.IsSupersetOf(target))
+            {
                 var next = stack.Peek();
-                if (current.Contains(next)) {
+                if (current.Contains(next))
+                {
                     stack.Pop();
                     continue;
                 }
-                
+
                 var usefulRules = rules.Where((rule) => rule.To.Contains(next));
-                if (!usefulRules.Any()) {
+                if (!usefulRules.Any())
+                {
                     stack.Pop();
                     continue;
                 }
 
                 var applicableRules = usefulRules.Where((rule) => rule.IsApplicable(current));
-                if (applicableRules.Any()) {
+                if (applicableRules.Any())
+                {
                     var rule = applicableRules.First();
-                    
-                    // Apply rule
+
                     current.UnionWith(rule.To);
-                    foreach (var fact in rule.To) {
+                    foreach (var fact in rule.To)
                         factProducingRules[fact] = rule;
-                    }
 
                     appliedRules.Add(rule);
                     continue;
                 }
 
                 var backPropagationRules = usefulRules.Where((rule) => !backPropagatedRules.Contains(rule));
-                if (!backPropagationRules.Any()) {
+                if (!backPropagationRules.Any())
+                {
                     stack.Pop();
                     continue;
                 }
 
-                foreach (var rule in backPropagationRules) {
+                foreach (var rule in backPropagationRules)
+                {
                     backPropagatedRules.Add(rule);
                     
                     var missingFacts = rule.From.Where((fact) => !current.Contains(fact));
@@ -64,9 +69,9 @@ namespace Production {
                 return result;
             result.Success = true;
 
-            // Traverse the trees, starting at root (target) nodes
             stack = new Stack<string>(target);
-            while (stack.Any()) {
+            while (stack.Any())
+            {
                 var fact = stack.Pop();
                 if (!factProducingRules.ContainsKey(fact))
                     continue;
@@ -77,11 +82,12 @@ namespace Production {
                     stack.Push(fromFact);
             }
 
-            // Remove duplicates from intersecting trees
             var seenRules = new HashSet<Model.Rule>();
-            for (var i = result.Rules.Count - 1; i >= 0; i--) {
+            for (var i = result.Rules.Count - 1; i >= 0; i--)
+            {
                 var rule = result.Rules[i];
-                if (seenRules.Contains(rule)) {
+                if (seenRules.Contains(rule))
+                {
                     result.Rules.RemoveAt(i);
                     continue;
                 }
@@ -89,8 +95,7 @@ namespace Production {
             }
 
             result.Rules.Reverse();
-            // Because we begin from the roots (targets)
-            
+
             return result;
         }
     }

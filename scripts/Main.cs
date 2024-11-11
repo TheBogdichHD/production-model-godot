@@ -7,8 +7,8 @@ using System.Linq;
 public partial class Main : Control
 {
     [Export]
-	string FactsPath = "games-knowledge-base/facts.md";
-	[Export]
+    string FactsPath = "games-knowledge-base/facts.md";
+    [Export]
     string RulesPath = "games-knowledge-base/rules.md";
 
     private PackedScene nodeScene = GD.Load<PackedScene>("graph_node.tscn");
@@ -20,15 +20,19 @@ public partial class Main : Control
 
     private void ReadFiles()
     {
-        foreach (var line in File.ReadAllLines(FactsPath).Where(x => !x.StartsWith('#') && x.Any())) {
+        foreach (var line in File.ReadAllLines(FactsPath).Where(x => !x.StartsWith('#') && x.Any()))
+        {
             var split = line.Split(":");
             model.AddFact(split[0].Trim(), split[1].Trim());
 
-            itemListInitial.AddItem(split[1].Trim());
-            itemListTarget.AddItem(split[1].Trim());
+            if (split[0].Trim().StartsWith("F1")) 
+                itemListTarget.AddItem(split[1].Trim());               
+            else
+                itemListInitial.AddItem(split[1].Trim()); 
         }
 
-        foreach (var line in File.ReadAllLines(RulesPath).Where(x => !x.StartsWith('#') && x.Any())) {
+        foreach (var line in File.ReadAllLines(RulesPath).Where(x => !x.StartsWith('#') && x.Any()))
+        {
             var split = line.Split("->");
             model.AddRule(split[0].Split(";").Select(x => x.Trim()), split[1].Split(";").Select(x => x.Trim()));
         }
@@ -41,7 +45,7 @@ public partial class Main : Control
             if (child is GraphNode)
                 graphEdit.RemoveChild(child);
         }
-        
+
         Solver.Result result;
         var current = new List<string>();
         var target = new List<string>();
@@ -51,7 +55,7 @@ public partial class Main : Control
             current.Add(model.GetFactName(itemListInitial.GetItemText(item)));
             GD.Print(model.GetFactName(itemListInitial.GetItemText(item)));
         }
-        
+
         foreach (var item in itemListTarget.GetSelectedItems())
         {
             target.Add(model.GetFactName(itemListTarget.GetItemText(item)));
@@ -67,21 +71,19 @@ public partial class Main : Control
     public void OnOptionButtonItemSelected(int index)
     {
         if (index == 0)
-        {
             solver = new ForwardSolver(model);
-        }
         else
-        {
             solver = new BackwardSolver(model);
-        }
     }
 
     public void PrintResult(Solver.Result result)
     {
         GD.Print("> Success: " + result.Success);
-        if (result.Success) {
+        if (result.Success)
+        {
             GD.Print("> Productions:");
-            foreach (var rule in result.Rules) {
+            foreach (var rule in result.Rules) 
+            {
                 IEnumerable<string> fromNodeTitles = rule.ToStringWithDescriptionsFrom(model);
                 IEnumerable<string> toNodeTitles = rule.ToStringWithDescriptionsTo(model);
 
@@ -110,20 +112,19 @@ public partial class Main : Control
                         graphEdit.ConnectNode(fromNodeTitle, 0, toNodeTitle, 0);
                     }
                 }
-                
-                
+
                 GD.Print("\t" + rule.ToStringWithDescriptions(model));
             }
         }
     }
-    
-	public override void _Ready()
-	{
+
+    public override void _Ready()
+    {
         itemListInitial = GetNode<ItemList>("VBoxContainer/HSplitContainer/HSplitContainer/ItemListInitial");
         itemListTarget = GetNode<ItemList>("VBoxContainer/HSplitContainer/HSplitContainer/ItemListTarget");
         graphEdit = GetNode<GraphEdit>("VBoxContainer/HSplitContainer/GraphEdit");
         solver = new ForwardSolver(model);
 
         ReadFiles();
-	}
+    }
 }
